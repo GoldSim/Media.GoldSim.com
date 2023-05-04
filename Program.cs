@@ -23,11 +23,12 @@ var provider                    = new FileExtensionContentTypeProvider();
 const int duration              = 60 * 60 * 24 * 365 * 2;                    // 63072000 seconds; i.e., two years
 
 provider.Mappings[".webmanifest"] = "application/manifest+json";
-
 provider.Mappings[".emf"]   = "image/x-emf";
 provider.Mappings[".m4s"]   = "video/mp4";
 provider.Mappings[".mpd"]   = "application/dash+xml";
 provider.Mappings[".m3u8"]  = "application/x-mpegURL";
+provider.Mappings[".gsm"]   = "application/octet-stream";
+provider.Mappings[".gsp"]   = "application/octet-stream";
 
 var staticFileOptions           = new StaticFileOptions {
   ContentTypeProvider           = provider,
