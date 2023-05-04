@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Content folders
+[Dd]ocuments/
+[Ii]mages/
+[Vv]ideos/
+
 # User-specific files
 *.rsuser
 *.suo
