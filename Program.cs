@@ -4,6 +4,7 @@
 | Project       Media Website
 \=============================================================================================================================*/
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 
 /*==============================================================================================================================
@@ -43,10 +44,24 @@ var staticFileOptions           = new StaticFileOptions {
   }
 };
 
-app.UseStaticFiles(staticFileOptions);
-
+/*------------------------------------------------------------------------------------------------------------------------------
+| Configure: Alternate Directories
+\-----------------------------------------------------------------------------------------------------------------------------*/
+registerDirectory(staticFileOptions, "wwwroot", "");
+registerDirectory(staticFileOptions, "Documents");
+registerDirectory(staticFileOptions, "Images");
+registerDirectory(staticFileOptions, "Videos");
 
 /*------------------------------------------------------------------------------------------------------------------------------
 | Run application
 \-----------------------------------------------------------------------------------------------------------------------------*/
 app.Run();
+
+/*==============================================================================================================================
+| METHOD: REGISTER DIRECTORY
+\-----------------------------------------------------------------------------------------------------------------------------*/
+void registerDirectory(StaticFileOptions options, string path, string? requestPath = null) =>
+  app!.UseStaticFiles(new StaticFileOptions {
+    FileProvider                = new PhysicalFileProvider(Path.Combine(builder!.Environment.ContentRootPath, path)),
+    RequestPath                 = requestPath?? "/" + path
+  });
