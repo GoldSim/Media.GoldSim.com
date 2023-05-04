@@ -17,8 +17,18 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 /*------------------------------------------------------------------------------------------------------------------------------
-| Configure: Static file handling
+| Configure: Static file handling with cache headers
 \-----------------------------------------------------------------------------------------------------------------------------*/
+var provider                    = new FileExtensionContentTypeProvider();
+const int duration              = 60 * 60 * 24 * 365 * 2;                    // 63072000 seconds; i.e., two years
+
+var staticFileOptions           = new StaticFileOptions {
+  ContentTypeProvider           = provider,
+  OnPrepareResponse             = context => {
+    context.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + duration;
+  }
+};
+
 app.UseStaticFiles(staticFileOptions);
 
 /*------------------------------------------------------------------------------------------------------------------------------
