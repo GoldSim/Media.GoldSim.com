@@ -5,6 +5,7 @@
 \=============================================================================================================================*/
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
 /*==============================================================================================================================
@@ -48,22 +49,12 @@ provider.Mappings[".gsm"]   = "application/octet-stream";
 provider.Mappings[".gsp"]   = "application/octet-stream";
 
 /*------------------------------------------------------------------------------------------------------------------------------
-| Configure: Static File Options
-\-----------------------------------------------------------------------------------------------------------------------------*/
-var staticFileOptions           = new StaticFileOptions {
-  ContentTypeProvider           = provider,
-  OnPrepareResponse             = context => {
-    context.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + duration;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------------------------------------
 | Configure: Alternate Directories
 \-----------------------------------------------------------------------------------------------------------------------------*/
-registerDirectory(staticFileOptions, "wwwroot", "");
-registerDirectory(staticFileOptions, "Documents");
-registerDirectory(staticFileOptions, "Images");
-registerDirectory(staticFileOptions, "Videos");
+registerDirectory("wwwroot", "");
+registerDirectory("Documents");
+registerDirectory("Images");
+registerDirectory("Videos");
 
 /*------------------------------------------------------------------------------------------------------------------------------
 | Run application
@@ -73,8 +64,12 @@ app.Run();
 /*==============================================================================================================================
 | METHOD: REGISTER DIRECTORY
 \-----------------------------------------------------------------------------------------------------------------------------*/
-void registerDirectory(StaticFileOptions options, string path, string? requestPath = null) =>
-  app!.UseStaticFiles(new StaticFileOptions {
-    FileProvider                = new PhysicalFileProvider(Path.Combine(builder!.Environment.ContentRootPath, path)),
-    RequestPath                 = requestPath?? "/" + path
+void registerDirectory(string path, string? requestPath = null) =>
+  app!.UseStaticFiles(new StaticFileOptions() {
+    ContentTypeProvider = provider,
+    OnPrepareResponse = context => {
+      context.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + duration;
+    },
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder!.Environment.ContentRootPath, path)),
+    RequestPath = requestPath ?? "/" + path
   });
